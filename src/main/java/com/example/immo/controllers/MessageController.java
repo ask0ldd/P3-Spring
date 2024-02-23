@@ -58,4 +58,11 @@ public class MessageController {
             return new ResponseEntity<String>("Can't find the requested Message.", HttpStatus.NOT_FOUND);
         }
     }
+
+    // !!! post '/messages'
+    /*
+     * {
+     * "message": "Message sent with success"
+     * }
+     */
 }
