@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.immo.dto.LoginResponseDto;
+import com.example.immo.dto.RegistrationDto;
 import com.example.immo.models.User;
 
 @RestController

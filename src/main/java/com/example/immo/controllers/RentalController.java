@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.immo.dto.ReturnableRentalDto;
 import com.example.immo.models.Rental;
 
 @RestController
