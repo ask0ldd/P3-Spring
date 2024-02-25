@@ -1,3 +1,7 @@
+package com.example.immo.dto;
+
+import com.example.immo.models.Message;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
