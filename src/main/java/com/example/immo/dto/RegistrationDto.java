@@ -1,3 +1,5 @@
+package com.example.immo.dto;
+
 public class RegistrationDto {
     private String username;
     private String password;

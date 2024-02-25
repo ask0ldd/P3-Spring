@@ -1,3 +1,7 @@
+package com.example.immo.dto;
+
+import com.example.immo.models.User;
+
 public class LoginResponseDto {
     private LoggedUserDto user;
     private String jwt;
