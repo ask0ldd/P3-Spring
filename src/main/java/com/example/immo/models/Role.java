@@ -9,14 +9,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.Data;
 
+/*
+ * Roles_seq : When using @GeneratedValue(strategy=GenerationType.AUTO) in an entity class, 
+ * Spring Boot may create a sequence table to manage the generation of primary key values for entities. 
+ * This table stores the next value to be used for auto-incrementing primary keys.
+ */
+@Data
 @Entity
 @Builder
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer roleId;
 

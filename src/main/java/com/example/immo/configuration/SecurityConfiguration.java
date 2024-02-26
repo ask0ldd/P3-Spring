@@ -77,6 +77,9 @@ public class SecurityConfiguration {
                             .requestMatchers(new AntPathRequestMatcher("/test1")).hasRole("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/test2")).hasRole("USER")
                             .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/api/auth/login/**")).permitAll()
+                            // rentals working
+                            .requestMatchers(new AntPathRequestMatcher("/api/rentals/**")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/auth/*")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/users2")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/user/*")).permitAll()

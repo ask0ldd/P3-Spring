@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.immo.dto.ReturnableRentalDto;
@@ -18,14 +19,16 @@ import com.example.immo.models.Rental;
 import com.example.immo.services.RentalService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("api")
+// @CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:4200")
 public class RentalController {
 
     @Autowired
     private RentalService rentalService;
 
     @GetMapping("/rentals")
-    public ResponseEntity<?> getUsers() {
+    public ResponseEntity<?> getRentals() {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,7 +40,7 @@ public class RentalController {
     }
 
     @GetMapping("/rental/{id}")
-    public ResponseEntity<?> getUser(@PathVariable("id") final Long id) {
+    public ResponseEntity<?> getRental(@PathVariable("id") final Long id) {
         try {
             ReturnableRentalDto rental = rentalService.getReturnableRental(id);
             return new ResponseEntity<>(rental, HttpStatus.OK);
@@ -47,7 +50,7 @@ public class RentalController {
     }
 
     @PutMapping("/rental/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable("id") final Long id, @RequestBody Rental rental) {
+    public ResponseEntity<?> updateRental(@PathVariable("id") final Long id, @RequestBody Rental rental) {
         try {
             Rental currentRental = rentalService.getRental(id);
 

@@ -15,8 +15,9 @@ import com.example.immo.models.User;
 import com.example.immo.services.AuthService;
 
 @RestController
-@RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("api/auth")
+// @CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     @Autowired
