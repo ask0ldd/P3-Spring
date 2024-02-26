@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.immo.dto.ReturnableRentalDto;
 import com.example.immo.models.Rental;
+import com.example.immo.services.RentalService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")

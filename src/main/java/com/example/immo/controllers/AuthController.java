@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.immo.dto.LoginResponseDto;
 import com.example.immo.dto.RegistrationDto;
 import com.example.immo.models.User;
+import com.example.immo.services.AuthService;
 
 @RestController
 @RequestMapping("/auth")
