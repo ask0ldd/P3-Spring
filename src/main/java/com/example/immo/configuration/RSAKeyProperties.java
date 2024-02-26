@@ -6,6 +6,8 @@ import java.security.interfaces.RSAPublicKey;
 
 import org.springframework.stereotype.Component;
 
+import com.example.immo.utils.KeyGeneratorUtility;
+
 @Component
 public class RSAKeyProperties {
     private RSAPublicKey publicKey;
