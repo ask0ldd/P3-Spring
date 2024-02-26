@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @Id
     /* GeneratedValue / Identity : autoincrement a number when id is missing */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long userId;
 
     @Column(name = "first_name", nullable = false, length = 255)

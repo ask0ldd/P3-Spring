@@ -31,7 +31,8 @@ import lombok.Setter;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
+    // @Column(name = "message_id")
+    @Column(name = "id")
     private Long messageId;
 
     @Column(name = "message", nullable = false, length = 2000)

@@ -33,7 +33,7 @@ import lombok.Setter;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rental_id")
+    @Column(name = "id")
     private Long rentalId;
 
     // @Column(name = "owner_id", nullable = false)
