@@ -12,15 +12,21 @@ import lombok.Setter;
 public class ReturnableUserDto {
 
     private Long userId;
-    private String firstname;
-    private String lastname;
+    /*
+     * private String firstname;
+     * private String lastname;
+     */
+    private String name;
     private String email;
 
     public ReturnableUserDto(User user) {
         super();
         this.userId = user.getUserId();
-        this.firstname = user.getFirstname();
-        this.lastname = user.getLastname();
+        /*
+         * this.firstname = user.getFirstname();
+         * this.lastname = user.getLastname();
+         */
+        this.name = user.getName();
         this.email = user.getEmail();
     }
 }

@@ -48,13 +48,18 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long userId;
 
-    @Column(name = "first_name", nullable = false, length = 255)
-    private String firstname;
+    /*
+     * @Column(name = "first_name", nullable = false, length = 255)
+     * private String firstname;
+     * 
+     * @Column(name = "last_name", nullable = false, length = 255)
+     * private String lastname;
+     */
 
-    @Column(name = "last_name", nullable = false, length = 255)
-    private String lastname;
+    @Column(name = "name", nullable = false, length = 255)
+    private String name;
 
-    @Column(name = "email", unique = true) // !!! unique
+    @Column(name = "email", unique = true) // !!! soutenance : unique
     private String email;
 
     @Column(name = "password", nullable = false, length = 255)
@@ -95,12 +100,15 @@ public class User implements UserDetails {
      * }
      */
 
-    public User(Long userId, String firstname, String lastname, String email, String password,
+    public User(Long userId, /* String firstname, String lastname, */ String name, String email, String password,
             Set<Role> authorities) {
         super();
         this.userId = userId;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        /*
+         * this.firstname = firstname;
+         * this.lastname = lastname;
+         */
+        this.name = name;
         this.email = email;
         this.password = password;
         this.authorities = authorities;

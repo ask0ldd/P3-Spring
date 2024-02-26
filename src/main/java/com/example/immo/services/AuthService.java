@@ -45,7 +45,7 @@ public class AuthService {
         Set<Role> authorities = new HashSet<>();
         authorities.add(userRole);
 
-        return userRepository.save(new User(null, "firstname", "lastname", username,
+        return userRepository.save(new User(null, "firstname lastname", username,
                 encodedPassword, authorities));
     }
 
