@@ -1,18 +1,26 @@
 package com.example.immo.controllers;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.immo.dto.LoginResponseDto;
+import com.example.immo.dto.ReturnableLoggedUserDto;
+import com.example.immo.dto.LoginDto;
 import com.example.immo.dto.RegistrationDto;
+import com.example.immo.dto.TokenResponseDto;
 import com.example.immo.models.User;
 import com.example.immo.services.AuthService;
+import com.example.immo.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("api/auth")
@@ -23,36 +31,29 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/register")
-    public User userRegister(@RequestBody RegistrationDto body) {
-        return authService.registerUser(body.getUsername(), body.getPassword());
+    public /* User */ ResponseEntity<TokenResponseDto> userRegister(@RequestBody RegistrationDto body) {
+        authService.registerUser(body.getEmail(), body.getUsername(), body.getPassword());
+        TokenResponseDto token = authService.loginUser(body.getEmail(), body.getPassword());
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> userLogin(@RequestBody RegistrationDto body) {
+    public ResponseEntity<TokenResponseDto> userLogin(@RequestBody LoginDto body) {
         System.out.println("********************* LOGIN ***************************");
-        LoginResponseDto loggedUser = authService.loginUser(body.getUsername(), body.getPassword());
-        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+        TokenResponseDto token = authService.loginUser(body.getEmail(), body.getPassword());
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getLoggedUser(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String email = principal.getName();
+        User loggedUser = userService.getUserByEmail(email);
+        return new ResponseEntity<ReturnableLoggedUserDto>(new ReturnableLoggedUserDto(loggedUser),
+                HttpStatus.OK);
+    }
 }
-
-/*
- * private static final Logger LOG =
- * LoggerFactory.getLogger(AuthController.class);
- * 
- * private TokenService tokenService;
- * 
- * public AuthController(TokenService tokenService) {
- * this.tokenService = tokenService;
- * }
- * 
- * @PostMapping("/token")
- * public String token(Authentication authentication) {
- * LOG.debug("Token requested for user : '{}'", authentication.getName());
- * String token = this.tokenService.generateToken(authentication);
- * LOG.debug("token granted : {}", token);
- * System.out.println(token);
- * return token;
- * }
- */
