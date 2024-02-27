@@ -55,10 +55,10 @@ public class Rental {
     private List<Message> messages;
 
     @Column(name = "surface")
-    private Float surface;
+    private Integer surface;
 
     @Column(name = "price")
-    private Float price;
+    private Integer price;
 
     @CreationTimestamp
     @Column(name = "created_at")
