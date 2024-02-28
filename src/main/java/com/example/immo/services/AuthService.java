@@ -8,11 +8,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.immo.dto.LoginResponseDto;
+import com.example.immo.dto.TokenResponseDto;
 import com.example.immo.models.Role;
 import com.example.immo.models.User;
 import com.example.immo.repositories.RoleRepository;
@@ -37,7 +38,7 @@ public class AuthService {
     @Autowired
     private TokenService tokenService;
 
-    public User registerUser(String username, String password) {
+    public TokenResponseDto registerUser(String email, String username, String password) {
 
         String encodedPassword = passwordEncoder.encode(password);
 
@@ -45,24 +46,39 @@ public class AuthService {
         Set<Role> authorities = new HashSet<>();
         authorities.add(userRole);
 
-        return userRepository.save(new User(null, "firstname lastname", username,
+        userRepository.save(new User(null, username, email,
                 encodedPassword, authorities));
+
+        try {
+            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            String token = tokenService.generateJwt(auth);
+            return new TokenResponseDto(token);
+        } catch (AuthenticationException e) {
+            return new TokenResponseDto(""); // maybe 40x error instead
+        }
+
     }
 
-    public LoginResponseDto loginUser(String username, String password) {
-
+    public TokenResponseDto loginUser(String email, String password) {
         try {
 
             // System.out.println("\n\n***************" +
             // userRepository.findByEmail(username).get().getAuthorities() +
             // "***************\n\n");
 
-            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             String token = tokenService.generateJwt(auth);
 
-            return new LoginResponseDto(userRepository.findByEmail(username).get(), token);
+            // return new LoginResponseDto(userRepository.findByEmail(email).get(), token);
+            return new TokenResponseDto(token);
         } catch (AuthenticationException e) {
-            return new LoginResponseDto(null, ""); // maybe 40x error instead
+            return new TokenResponseDto(""); // maybe 40x error instead
         }
+    }
+
+    public User getUserInfos() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        return user;
     }
 }
