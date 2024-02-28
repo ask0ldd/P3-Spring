@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.example.immo.models.Message;
 import com.example.immo.models.Rental;
@@ -19,6 +20,7 @@ import com.example.immo.services.RentalService;
 import com.example.immo.services.UserService;
 
 @SpringBootApplication
+// @EnableWebMvc // deal with multipart requests
 public class ImmoApplication implements CommandLineRunner {
 
 	@Autowired
@@ -74,13 +76,16 @@ public class ImmoApplication implements CommandLineRunner {
 	private void createRentals() {
 		Rental rental1 = Rental.builder().name("name1").rentalId(1L).owner(userService.getUser(1L))
 				.description("description1")
-				.picture("picture1.jpg").surface(31F).price(501F).build();
+				.picture("https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg")
+				.surface(31).price(501).build();
 		Rental rental2 = Rental.builder().name("name2").rentalId(2L).owner(userService.getUser(2L))
 				.description("description2")
-				.picture("picture2.jpg").surface(32F).price(502F).build();
+				.picture("https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg")
+				.surface(32).price(502).build();
 		Rental rental3 = Rental.builder().name("name3").rentalId(3L).owner(userService.getUser(1L))
 				.description("description3")
-				.picture("picture3.jpg").surface(33F).price(503F).build();
+				.picture("https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg")
+				.surface(33).price(503).build();
 
 		rentalService.saveRental(rental1);
 		rentalService.saveRental(rental2);
@@ -95,5 +100,14 @@ public class ImmoApplication implements CommandLineRunner {
 		messageService.saveMessage(message1);
 		messageService.saveMessage(message2);
 	}
+
+	/*
+	 * @Bean(name = "multipartResolver")
+	 * public CommonsMultipartResolver commonsMultipartResolver() {
+	 * CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+	 * // Configure resolver settings if needed
+	 * return resolver;
+	 * }
+	 */
 
 }
