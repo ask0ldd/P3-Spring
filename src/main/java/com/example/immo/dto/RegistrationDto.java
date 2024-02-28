@@ -2,16 +2,22 @@ package com.example.immo.dto;
 
 public class RegistrationDto {
     private String username;
+    private String email;
     private String password;
 
-    public RegistrationDto(String username, String password) {
+    public RegistrationDto(String email, String name, String password) {
         super();
-        this.username = username;
+        this.username = name;
+        this.email = email;
         this.password = password;
     }
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getEmail() {
+        return this.email;
     }
 
     public String getPassword() {
@@ -20,6 +26,10 @@ public class RegistrationDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
