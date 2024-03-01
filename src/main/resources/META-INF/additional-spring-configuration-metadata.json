@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "file.path",
+  "type": "java.lang.String",
+  "description": "Folder containing all the files uploaded by the users when posting a new Rental."
+}]}
