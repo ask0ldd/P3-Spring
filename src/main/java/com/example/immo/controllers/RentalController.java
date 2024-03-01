@@ -119,15 +119,17 @@ public class RentalController {
             return new ResponseEntity<String>("A picture is needed!", HttpStatus.BAD_REQUEST);
         }
 
-        fileService.save(picture);
+        String filename = fileService.save(picture);
 
         Principal principal = request.getUserPrincipal();
         String email = principal.getName();
         User loggedUser = userService.getUserByEmail(email);
 
+        // 127.0.0.1:3001/img/rental/griff.jpg
         Rental rental = Rental.builder().name(name).rentalId(null).owner(loggedUser)
                 .description(description)
-                .picture(picture.getOriginalFilename())
+                // .picture(picture.getOriginalFilename())
+                .picture("http://127.0.0.1:3001/img/rental/" + filename)
                 .surface(Integer.parseInt(surface)).price(Integer.parseInt(price)).build();
 
         rentalService.saveRental(rental);
