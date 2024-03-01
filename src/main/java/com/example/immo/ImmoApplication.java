@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-// import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.example.immo.models.Message;
 import com.example.immo.models.Rental;
@@ -20,7 +19,6 @@ import com.example.immo.services.RentalService;
 import com.example.immo.services.UserService;
 
 @SpringBootApplication
-// @EnableWebMvc // deal with multipart requests
 public class ImmoApplication implements CommandLineRunner {
 
 	@Autowired
@@ -80,7 +78,7 @@ public class ImmoApplication implements CommandLineRunner {
 				.surface(31).price(501).build();
 		Rental rental2 = Rental.builder().name("name2").rentalId(2L).owner(userService.getUser(2L))
 				.description("description2")
-				.picture("https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg")
+				.picture("http://127.0.0.1:3001/img/rental/griff.jpg")
 				.surface(32).price(502).build();
 		Rental rental3 = Rental.builder().name("name3").rentalId(3L).owner(userService.getUser(1L))
 				.description("description3")

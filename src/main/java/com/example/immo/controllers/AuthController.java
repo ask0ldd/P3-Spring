@@ -35,7 +35,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public /* User */ ResponseEntity<TokenResponseDto> userRegister(@RequestBody RegistrationDto body) {
+    public ResponseEntity<TokenResponseDto> userRegister(@RequestBody RegistrationDto body) {
         authService.registerUser(body.getEmail(), body.getUsername(), body.getPassword());
         TokenResponseDto token = authService.loginUser(body.getEmail(), body.getPassword());
         return new ResponseEntity<>(token, HttpStatus.OK);
@@ -43,7 +43,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDto> userLogin(@RequestBody LoginDto body) {
-        System.out.println("********************* LOGIN ***************************");
         TokenResponseDto token = authService.loginUser(body.getEmail(), body.getPassword());
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
