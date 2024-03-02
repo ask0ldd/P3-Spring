@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.immo.dto.ReturnableRentalDto;
-import com.example.immo.dto.ReturnableRentalsDto;
+import com.example.immo.dto.responses.ResponseRentalDto;
+import com.example.immo.dto.responses.ResponseRentalsDto;
 import com.example.immo.models.Rental;
 import com.example.immo.models.User;
 import com.example.immo.services.FileService;
@@ -30,7 +31,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("api")
-// @CrossOrigin(origins = "http://localhost:5173")
 @CrossOrigin(origins = "http://localhost:4200")
 public class RentalController {
 
@@ -46,10 +46,13 @@ public class RentalController {
     @GetMapping("/rentals")
     public ResponseEntity<?> getRentals() {
         try {
+            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+            }
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            Iterable<ReturnableRentalDto> rentals = rentalService.getReturnableRentals();
-            return new ResponseEntity<>(new ReturnableRentalsDto(rentals), headers, HttpStatus.OK);
+            Iterable<ResponseRentalDto> rentals = rentalService.getReturnableRentals();
+            return new ResponseEntity<>(new ResponseRentalsDto(rentals), headers, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find any Rental.", HttpStatus.NOT_FOUND);
         }
@@ -58,7 +61,10 @@ public class RentalController {
     @GetMapping("/rentals/{id}")
     public ResponseEntity<?> getRental(@PathVariable("id") final Long id) {
         try {
-            ReturnableRentalDto rental = rentalService.getReturnableRental(id);
+            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+            }
+            ResponseRentalDto rental = rentalService.getReturnableRental(id);
             return new ResponseEntity<>(rental, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find the requested Rental.", HttpStatus.NOT_FOUND);
@@ -68,6 +74,9 @@ public class RentalController {
     @PutMapping("/rentals/{id}")
     public ResponseEntity<?> updateRental(@PathVariable("id") final Long id, @RequestBody Rental rental) {
         try {
+            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+            }
             Rental currentRental = rentalService.getRental(id);
 
             String name = rental.getName();
@@ -87,7 +96,7 @@ public class RentalController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            return new ResponseEntity<>(new ReturnableRentalDto(modifiedRental), headers,
+            return new ResponseEntity<>("Rental updated !",
                     HttpStatus.OK);
         } catch (Exception exception) {
             HttpHeaders headers = new HttpHeaders();
@@ -114,6 +123,10 @@ public class RentalController {
             @RequestParam("surface") String surface,
             @RequestParam("price") String price, @RequestParam("picture") MultipartFile picture,
             @RequestParam("description") String description) {
+
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+        }
 
         if (picture.isEmpty()) {
             return new ResponseEntity<String>("A picture is needed!", HttpStatus.BAD_REQUEST);
