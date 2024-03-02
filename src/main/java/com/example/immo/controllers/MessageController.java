@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,24 +15,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.immo.dto.ReturnableMessageDto;
+import com.example.immo.dto.payloads.PayloadMessageDto;
+import com.example.immo.dto.responses.ResponseMessageDto;
 import com.example.immo.models.Message;
+import com.example.immo.models.Rental;
+import com.example.immo.models.User;
 import com.example.immo.services.MessageService;
+import com.example.immo.services.RentalService;
+import com.example.immo.services.UserService;
 
 @RestController
 @RequestMapping("api")
-// @CrossOrigin(origins = "http://localhost:5173")
 @CrossOrigin(origins = "http://localhost:4200")
 public class MessageController {
+
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RentalService rentalService;
 
     @GetMapping("/messages")
     public ResponseEntity<?> getMessages() {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            Iterable<ReturnableMessageDto> messages = messageService.getReturnableMessages();
+            Iterable<ResponseMessageDto> messages = messageService.getReturnableMessages();
             return new ResponseEntity<>(messages, headers, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find any Message.", HttpStatus.NOT_FOUND);
@@ -41,18 +53,25 @@ public class MessageController {
     @GetMapping("/message/{id}")
     public ResponseEntity<?> getMessage(@PathVariable("id") final Long id) {
         try {
-            ReturnableMessageDto message = messageService.getReturnableMessage(id);
+            ResponseMessageDto message = messageService.getReturnableMessage(id);
             return new ResponseEntity<>(message, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find the requested Message.", HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/message")
-    public ResponseEntity<?> createMessage(@RequestBody Message message) {
+    @PostMapping("/messages")
+    public ResponseEntity<?> createMessage(@RequestBody PayloadMessageDto message) {
         try {
-            Message createdMessage = messageService.saveMessage(message);
-            return new ResponseEntity<>(new ReturnableMessageDto(createdMessage), HttpStatus.CREATED);
+            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+            }
+            User user = userService.getUser(message.getUser_id());
+            Rental rental = rentalService.getRental(message.getRental_id());
+            Message newMessage = Message.builder().message(message.getMessage()).user(user)
+                    .rental(rental).build();
+            messageService.saveMessage(newMessage);
+            return new ResponseEntity<>("Message sent with success", HttpStatus.CREATED);
         } catch (Exception exception) {
             return new ResponseEntity<>("Can't create the target Message.", HttpStatus.BAD_REQUEST);
         }
@@ -67,11 +86,4 @@ public class MessageController {
             return new ResponseEntity<String>("Can't find the requested Message.", HttpStatus.NOT_FOUND);
         }
     }
-
-    // !!! post '/messages'
-    /*
-     * {
-     * "message": "Message sent with success"
-     * }
-     */
 }
