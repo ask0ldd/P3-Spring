@@ -1,5 +1,7 @@
 package com.example.immo.configuration;
 
+import java.io.IOException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +21,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -27,6 +31,9 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -69,12 +76,15 @@ public class SecurityConfiguration {
         return http.csrf(csrf -> csrf.disable())
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
                 .cors(Customizer.withDefaults())
+                // .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers(new AntPathRequestMatcher("/api/auth/login")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/api/auth/register")).permitAll()
-                            .requestMatchers(new AntPathRequestMatcher("/api/auth/me")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/api/auth/me")).hasRole("ADMIN")
                             .requestMatchers(new AntPathRequestMatcher("/api/rentals/**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/api/messages")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/auth/*")).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/img/**")).permitAll()
                             .anyRequest().authenticated();
@@ -97,6 +107,18 @@ public class SecurityConfiguration {
         return jwtConverter;
     }
 
+    /*
+     * public class CustomAuthenticationEntryPoint implements
+     * AuthenticationEntryPoint {
+     * 
+     * @Override
+     * public void commence(HttpServletRequest request, HttpServletResponse
+     * response,
+     * AuthenticationException authException) throws IOException {
+     * response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+     * }
+     * }
+     */
 }
 
 // MVC Request Matcher
