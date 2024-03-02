@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.immo.dto.ReturnableUserDto;
+import com.example.immo.dto.responses.ResponseUserDto;
 import com.example.immo.exceptions.UserNotFoundException;
 import com.example.immo.models.User;
 import com.example.immo.repositories.UserRepository;
@@ -30,19 +30,19 @@ public class UserService implements UserDetailsService {
 
     public User getUser(final Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target user can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target user cannot be found."));
         return user;
     }
 
-    public ReturnableUserDto getReturnableUser(final Long id) {
+    public ResponseUserDto getReturnableUser(final Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target user can't be found."));
-        return new ReturnableUserDto(user);
+                .orElseThrow(() -> new UserNotFoundException("Target user cannot be found."));
+        return new ResponseUserDto(user);
     }
 
     public User getUserByEmail(final String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Target user can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target user cannot be found."));
         return user;
     }
 
@@ -53,13 +53,13 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
-    public Iterable<ReturnableUserDto> getReturnableUsers() {
+    public Iterable<ResponseUserDto> getReturnableUsers() {
         Iterable<User> users = userRepository.findAll();
         if (!users.iterator().hasNext())
             throw new UserNotFoundException("No user can be found.");
-        Iterable<ReturnableUserDto> returnableUsers = StreamSupport.stream(users.spliterator(), false)
+        Iterable<ResponseUserDto> returnableUsers = StreamSupport.stream(users.spliterator(), false)
                 .map(user -> {
-                    ReturnableUserDto returnableUser = new ReturnableUserDto(user);
+                    ResponseUserDto returnableUser = new ResponseUserDto(user);
                     return returnableUser;
                 })
                 .collect(Collectors.toList());
@@ -68,13 +68,17 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(final Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target user can't be deleted."));
+                .orElseThrow(() -> new UserNotFoundException("Target user cannot be deleted."));
         userRepository.delete(user);
     }
 
     public User saveUser(User user) {
-        User savedUser = userRepository.save(user);
-        return savedUser;
+        try {
+            User savedUser = userRepository.save(user);
+            return savedUser;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save message: " + e.getMessage());
+        }
     }
 
     @Override
