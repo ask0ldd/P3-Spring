@@ -6,13 +6,14 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.immo.dto.ReturnableMessageDto;
+import com.example.immo.dto.responses.ResponseMessageDto;
 import com.example.immo.exceptions.UserNotFoundException;
 import com.example.immo.models.Message;
 import com.example.immo.repositories.MessageRepository;
+import com.example.immo.services.interfaces.IMessageService;
 
 @Service
-public class MessageService {
+public class MessageService implements IMessageService {
 
     @Autowired
     MessageRepository messageRepository;
@@ -24,13 +25,13 @@ public class MessageService {
         return messages;
     }
 
-    public Iterable<ReturnableMessageDto> getReturnableMessages() {
+    public Iterable<ResponseMessageDto> getReturnableMessages() {
         Iterable<Message> messages = messageRepository.findAll();
         if (!messages.iterator().hasNext())
             throw new UserNotFoundException("No message can be found.");
-        Iterable<ReturnableMessageDto> returnableMessages = StreamSupport.stream(messages.spliterator(), false)
+        Iterable<ResponseMessageDto> returnableMessages = StreamSupport.stream(messages.spliterator(), false)
                 .map(message -> {
-                    return new ReturnableMessageDto(message);
+                    return new ResponseMessageDto(message);
                 })
                 .collect(Collectors.toList());
         return returnableMessages;
@@ -38,24 +39,29 @@ public class MessageService {
 
     public Message getMessage(Long id) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target message can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target message cannot be found."));
         return message;
     }
 
-    public ReturnableMessageDto getReturnableMessage(Long id) {
+    public ResponseMessageDto getReturnableMessage(Long id) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target message can't be found."));
-        return new ReturnableMessageDto(message);
+                .orElseThrow(() -> new UserNotFoundException("Target message cannot be found."));
+        return new ResponseMessageDto(message);
     }
 
     public Message saveMessage(Message message) {
-        Message savedMessage = messageRepository.save(message);
-        return savedMessage;
+        // should verify si message.rental_id & message.user_id exists
+        try {
+            Message savedMessage = messageRepository.save(message);
+            return savedMessage;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save message: " + e.getMessage());
+        }
     }
 
     public void deleteMessage(Long id) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target message can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target message cannot be found."));
         messageRepository.delete(message);
     }
 }
