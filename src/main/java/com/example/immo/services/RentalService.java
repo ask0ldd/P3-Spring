@@ -6,30 +6,31 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.immo.dto.ReturnableRentalDto;
+import com.example.immo.dto.responses.ResponseRentalDto;
 import com.example.immo.exceptions.UserNotFoundException;
 import com.example.immo.models.Rental;
 import com.example.immo.repositories.RentalRepository;
+import com.example.immo.services.interfaces.IRentalService;
 
 import lombok.Data;
 
 @Data
 @Service
-public class RentalService {
+public class RentalService implements IRentalService {
 
     @Autowired
     private RentalRepository rentalRepository;
 
     public Rental getRental(final Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target rental can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target rental cannot be found."));
         return rental;
     }
 
-    public ReturnableRentalDto getReturnableRental(final Long id) {
+    public ResponseRentalDto getReturnableRental(final Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target rental can't be found."));
-        return new ReturnableRentalDto(rental);
+                .orElseThrow(() -> new UserNotFoundException("Target rental cannot be found."));
+        return new ResponseRentalDto(rental);
     }
 
     public Iterable<Rental> getRentals() {
@@ -39,13 +40,13 @@ public class RentalService {
         return rentals;
     }
 
-    public Iterable<ReturnableRentalDto> getReturnableRentals() {
+    public Iterable<ResponseRentalDto> getReturnableRentals() {
         Iterable<Rental> rentals = rentalRepository.findAll();
         if (!rentals.iterator().hasNext())
             throw new UserNotFoundException("Can't find any Rental.");
-        Iterable<ReturnableRentalDto> returnableRentals = StreamSupport.stream(rentals.spliterator(), false)
+        Iterable<ResponseRentalDto> returnableRentals = StreamSupport.stream(rentals.spliterator(), false)
                 .map(rental -> {
-                    ReturnableRentalDto returnableRental = new ReturnableRentalDto(rental);
+                    ResponseRentalDto returnableRental = new ResponseRentalDto(rental);
                     return returnableRental;
                 })
                 .collect(Collectors.toList());
@@ -53,13 +54,17 @@ public class RentalService {
     }
 
     public Rental saveRental(Rental rental) {
-        Rental savedRental = rentalRepository.save(rental);
-        return savedRental;
+        try {
+            Rental savedRental = rentalRepository.save(rental);
+            return savedRental;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save message: " + e.getMessage());
+        }
     }
 
     public void deleteRental(final Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Target rental can't be found."));
+                .orElseThrow(() -> new UserNotFoundException("Target rental cannot be found."));
         rentalRepository.delete(rental);
     }
 }
