@@ -1,5 +1,6 @@
 package com.example.immo.services;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -50,13 +51,17 @@ public class MessageService implements IMessageService {
     }
 
     public Message saveMessage(Message message) {
+        return Optional.of(messageRepository.save(message))
+                .orElseThrow(() -> new RuntimeException("Failed to save the message."));
         // should verify si message.rental_id & message.user_id exists
-        try {
-            Message savedMessage = messageRepository.save(message);
-            return savedMessage;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save message: " + e.getMessage());
-        }
+        /*
+         * try {
+         * Message savedMessage = messageRepository.save(message);
+         * return savedMessage;
+         * } catch (Exception e) {
+         * throw new RuntimeException("Failed to save message: " + e.getMessage());
+         * }
+         */
     }
 
     public void deleteMessage(Long id) {
