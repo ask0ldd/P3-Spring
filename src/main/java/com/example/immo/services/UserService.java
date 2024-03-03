@@ -1,5 +1,6 @@
 package com.example.immo.services;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -73,12 +74,16 @@ public class UserService implements UserDetailsService {
     }
 
     public User saveUser(User user) {
-        try {
-            User savedUser = userRepository.save(user);
-            return savedUser;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save message: " + e.getMessage());
-        }
+        return Optional.of(userRepository.save(user))
+                .orElseThrow(() -> new RuntimeException("Failed to save the User."));
+        /*
+         * try {
+         * User savedUser = userRepository.save(user);
+         * return savedUser;
+         * } catch (Exception e) {
+         * throw new RuntimeException("Failed to save message: " + e.getMessage());
+         * }
+         */
     }
 
     @Override
