@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.immo.dto.payloads.PayloadMessageDto;
+import com.example.immo.dto.responses.ResponseDefaultDto;
 import com.example.immo.dto.responses.ResponseMessageDto;
 import com.example.immo.models.Message;
 import com.example.immo.models.Rental;
@@ -38,6 +39,26 @@ public class MessageController {
     @Autowired
     private RentalService rentalService;
 
+    // Create a new Message
+    @PostMapping("/messages")
+    public ResponseEntity<?> createMessage(@RequestBody PayloadMessageDto message) {
+        try {
+            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
+            }
+            User user = userService.getUser(message.getUser_id());
+            Rental rental = rentalService.getRental(message.getRental_id());
+            Message newMessage = Message.builder().message(message.getMessage()).user(user)
+                    .rental(rental).build();
+            messageService.saveMessage(newMessage);
+            return new ResponseEntity<ResponseDefaultDto>(new ResponseDefaultDto("Message sent with success"),
+                    HttpStatus.CREATED);
+        } catch (Exception exception) {
+            return new ResponseEntity<>("Can't create the target Message.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Not Required
     @GetMapping("/messages")
     public ResponseEntity<?> getMessages() {
         try {
@@ -50,6 +71,7 @@ public class MessageController {
         }
     }
 
+    // Not Required
     @GetMapping("/message/{id}")
     public ResponseEntity<?> getMessage(@PathVariable("id") final Long id) {
         try {
@@ -60,30 +82,16 @@ public class MessageController {
         }
     }
 
-    @PostMapping("/messages")
-    public ResponseEntity<?> createMessage(@RequestBody PayloadMessageDto message) {
-        try {
-            if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access");
-            }
-            User user = userService.getUser(message.getUser_id());
-            Rental rental = rentalService.getRental(message.getRental_id());
-            Message newMessage = Message.builder().message(message.getMessage()).user(user)
-                    .rental(rental).build();
-            messageService.saveMessage(newMessage);
-            return new ResponseEntity<>("Message sent with success", HttpStatus.CREATED);
-        } catch (Exception exception) {
-            return new ResponseEntity<>("Can't create the target Message.", HttpStatus.BAD_REQUEST);
-        }
-    }
-
+    // Not Required
     @DeleteMapping("/message/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable("id") final Long id) {
         try {
             messageService.deleteMessage(id);
             return new ResponseEntity<String>("Message deleted.", HttpStatus.OK);
         } catch (Exception exception) {
-            return new ResponseEntity<String>("Can't find the requested Message.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("Can't find the requested Message.",
+                    HttpStatus.NOT_FOUND);
         }
     }
+
 }
