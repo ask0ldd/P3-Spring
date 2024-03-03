@@ -1,5 +1,6 @@
 package com.example.immo.services;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -54,12 +55,16 @@ public class RentalService implements IRentalService {
     }
 
     public Rental saveRental(Rental rental) {
-        try {
-            Rental savedRental = rentalRepository.save(rental);
-            return savedRental;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save message: " + e.getMessage());
-        }
+        return Optional.of(rentalRepository.save(rental))
+                .orElseThrow(() -> new RuntimeException("Failed to save the rental."));
+        /*
+         * try {
+         * Rental savedRental = rentalRepository.save(rental);
+         * return savedRental;
+         * } catch (Exception e) {
+         * throw new RuntimeException("Failed to save message: " + e.getMessage());
+         * }
+         */
     }
 
     public void deleteRental(final Long id) {
