@@ -5,8 +5,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
+import com.example.immo.services.interfaces.IValidationService;
+
 @Service
-public class ValidationService {
+public class ValidationService implements IValidationService {
 
     public boolean isName(String string) {
         Pattern p = Pattern.compile(
