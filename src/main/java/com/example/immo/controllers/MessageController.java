@@ -62,9 +62,9 @@ public class MessageController {
     @GetMapping("/messages")
     public ResponseEntity<?> getMessages() {
         try {
+            Iterable<ResponseMessageDto> messages = messageService.getReturnableMessages();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            Iterable<ResponseMessageDto> messages = messageService.getReturnableMessages();
             return new ResponseEntity<>(messages, headers, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find any Message.", HttpStatus.NOT_FOUND);
@@ -76,7 +76,9 @@ public class MessageController {
     public ResponseEntity<?> getMessage(@PathVariable("id") final Long id) {
         try {
             ResponseMessageDto message = messageService.getReturnableMessage(id);
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(message, headers, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<String>("Can't find the requested Message.", HttpStatus.NOT_FOUND);
         }
