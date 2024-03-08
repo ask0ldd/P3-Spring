@@ -59,18 +59,7 @@ public class AuthController {
         }
     }
 
-    /*
-     * @GetMapping("/me")
-     * public ResponseEntity<?> getLoggedUser(HttpServletRequest request) {
-     * Principal principal = request.getUserPrincipal();
-     * String email = principal.getName();
-     * User loggedUser = userService.getUserByEmail(email);
-     * return new ResponseEntity<ReturnableLoggedUserDto>(new
-     * ReturnableLoggedUserDto(loggedUser),
-     * HttpStatus.OK);
-     * }
-     */
-
+    // Retrieve the infos of the current authenticated User
     @GetMapping("/me")
     public ResponseEntity<?> getLoggedUser(HttpServletRequest request) {
         try {
@@ -89,3 +78,15 @@ public class AuthController {
         }
     }
 }
+
+/*
+ * @GetMapping("/me")
+ * public ResponseEntity<?> getLoggedUser(HttpServletRequest request) {
+ * Principal principal = request.getUserPrincipal();
+ * String email = principal.getName();
+ * User loggedUser = userService.getUserByEmail(email);
+ * return new ResponseEntity<ReturnableLoggedUserDto>(new
+ * ReturnableLoggedUserDto(loggedUser),
+ * HttpStatus.OK);
+ * }
+ */
