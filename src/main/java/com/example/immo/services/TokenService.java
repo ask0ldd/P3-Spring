@@ -11,8 +11,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import com.example.immo.services.interfaces.ITokenService;
+
 @Service
-public class TokenService {
+public class TokenService implements ITokenService {
 
     private final JwtEncoder jwtEncoder;
 
@@ -21,9 +23,6 @@ public class TokenService {
     }
 
     public String generateJwt(Authentication auth) {
-
-        // System.out.println("********generatejwt*******" + auth.getName() +
-        // "******************************");
 
         Instant now = Instant.now();
 
