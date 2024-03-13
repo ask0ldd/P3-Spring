@@ -1,6 +1,6 @@
 package com.example.immo.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,14 +30,15 @@ import com.example.immo.services.UserService;
 @CrossOrigin(origins = "http://localhost:4200")
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+    private final UserService userService;
+    private final RentalService rentalService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RentalService rentalService;
+    public MessageController(MessageService messageService, UserService userService, RentalService rentalService) {
+        this.messageService = messageService;
+        this.userService = userService;
+        this.rentalService = rentalService;
+    }
 
     // Create a new Message
     @PostMapping("/messages")
