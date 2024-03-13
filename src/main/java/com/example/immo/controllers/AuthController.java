@@ -27,11 +27,13 @@ import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    public AuthController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<TokenResponseDto> userRegister(@RequestBody RegistrationDto body) {
