@@ -33,8 +33,15 @@ import jakarta.servlet.http.HttpServletResponse;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ImageController {
 
-    @Autowired
-    private FileService fileService;
+    // old
+    // @Autowired
+    // private FileService fileService;
+
+    private final FileService fileService;
+
+    public ImageController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @Value("${file.path}")
     private String filePath;
