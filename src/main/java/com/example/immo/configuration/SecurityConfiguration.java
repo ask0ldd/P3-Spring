@@ -55,13 +55,16 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
-        DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
-        daoProvider.setUserDetailsService(userDetailsService);
-        daoProvider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(daoProvider);
-    }
+    /*
+     * @Bean
+     * AuthenticationManager authenticationManager(UserDetailsService
+     * userDetailsService) {
+     * DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
+     * daoProvider.setUserDetailsService(userDetailsService);
+     * daoProvider.setPasswordEncoder(passwordEncoder());
+     * return new ProviderManager(daoProvider);
+     * }
+     */
 
     // !!!!!!!!!!!!!! protect routes
     @Bean
