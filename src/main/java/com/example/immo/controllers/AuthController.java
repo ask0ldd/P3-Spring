@@ -2,7 +2,7 @@ package com.example.immo.controllers;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -90,5 +90,47 @@ public class AuthController {
  * return new ResponseEntity<ReturnableLoggedUserDto>(new
  * ReturnableLoggedUserDto(loggedUser),
  * HttpStatus.OK);
+ * }
+ */
+
+/*
+ * 
+ * @Controller
+ * public class LoginController {
+ * 
+ * @Autowired
+ * private SecurityContextHolder securityContextHolder;
+ * 
+ * @PostMapping("/login")
+ * public String login(@RequestParam("username") String
+ * username, @RequestParam("password") String password) {
+ * if (username.equals("user") && password.equals("password")) {
+ * securityContextHolder.setAuthenticatedUser(new User(username, password));
+ * return "redirect:/";
+ * } else {
+ * return "redirect:/login?error";
+ * }
+ * }
+ * }
+ */
+
+/*
+ * Authenticated user infos
+ * 
+ * @Controller
+ * public class HomeController {
+ * 
+ * @Autowired
+ * private SecurityContextHolder securityContextHolder;
+ * 
+ * @GetMapping("/")
+ * public String home() {
+ * User user = securityContextHolder.getAuthenticatedUser();
+ * if (user != null) {
+ * return "Welcome, " + user.getUsername() + "!";
+ * } else {
+ * return "You are not logged in.";
+ * }
+ * }
  * }
  */
