@@ -2,7 +2,7 @@ package com.example.immo.controllers;
 
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,14 +34,15 @@ import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "http://localhost:4200")
 public class RentalController {
 
-    @Autowired
-    private RentalService rentalService;
+    private final RentalService rentalService;
+    private final UserService userService;
+    private final FileService fileService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private FileService fileService;
+    public RentalController(RentalService rentalService, UserService userService, FileService fileService) {
+        this.rentalService = rentalService;
+        this.userService = userService;
+        this.fileService = fileService;
+    }
 
     // Retrieve all Rentals
     @GetMapping("/rentals")
