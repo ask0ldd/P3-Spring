@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.immo.dto.responses.ResponseMessageDto;
@@ -16,8 +15,11 @@ import com.example.immo.services.interfaces.IMessageService;
 @Service
 public class MessageService implements IMessageService {
 
-    @Autowired
-    MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+
+    public MessageService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
 
     public Iterable<Message> getMessages() {
         Iterable<Message> messages = messageRepository.findAll();
