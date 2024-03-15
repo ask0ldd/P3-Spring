@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.immo.dto.responses.ResponseRentalDto;
@@ -19,8 +18,11 @@ import lombok.Data;
 @Service
 public class RentalService implements IRentalService {
 
-    @Autowired
-    private RentalRepository rentalRepository;
+    private final RentalRepository rentalRepository;
+
+    public RentalService(RentalRepository rentalRepository) {
+        this.rentalRepository = rentalRepository;
+    }
 
     public Rental getRental(final Long id) {
         Rental rental = rentalRepository.findById(id)
