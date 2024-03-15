@@ -3,7 +3,6 @@ package com.example.immo.services;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,33 +23,35 @@ import com.example.immo.services.interfaces.IAuthService;
 @Transactional
 public class AuthService implements IAuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authManager;
-
-    @Autowired
-    private TokenService tokenService;
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager, TokenService tokenService) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+    }
 
     public TokenResponseDto registerUser(String email, String username, String password) {
         try {
             String encodedPassword = passwordEncoder.encode(password);
 
-            Role userRole = roleRepository.findByAuthority("USER").get();
+            Role userRole = roleRepository.findByAuthority("USER")
+                    .orElseThrow(() -> new RuntimeException("User role not found")); // .get()
             Set<Role> authorities = new HashSet<>();
             authorities.add(userRole);
 
             userRepository.save(new User(null, username, email,
                     encodedPassword, authorities));
 
-            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            Authentication auth = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password));
             String token = tokenService.generateJwt(auth);
             return new TokenResponseDto(token);
         } catch (AuthenticationException e) {
@@ -61,7 +62,8 @@ public class AuthService implements IAuthService {
 
     public TokenResponseDto loginUser(String email, String password) {
         try {
-            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            Authentication auth = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password));
             String token = tokenService.generateJwt(auth);
             return new TokenResponseDto(token);
         } catch (AuthenticationException e) {
