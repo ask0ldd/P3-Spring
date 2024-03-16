@@ -3,7 +3,6 @@ package com.example.immo;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,18 +20,20 @@ import com.example.immo.services.UserService;
 @SpringBootApplication
 public class ImmoApplication implements CommandLineRunner {
 
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private RentalService rentalService;
-	@Autowired
-	private MessageService messageService;
+	private final UserService userService;
+	private final RentalService rentalService;
+	private final MessageService messageService;
+	private final RoleRepository roleRepository;
+	private final PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	public ImmoApplication(UserService userService, RentalService rentalService, MessageService messageService,
+			RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+		this.userService = userService;
+		this.rentalService = rentalService;
+		this.messageService = messageService;
+		this.roleRepository = roleRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ImmoApplication.class, args);
