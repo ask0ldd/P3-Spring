@@ -5,6 +5,7 @@ import java.security.Principal;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,6 +76,24 @@ public class AuthController {
                 return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity<ResponseLoggedUserDto>(new ResponseLoggedUserDto(loggedUser), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/me2")
+    public ResponseEntity<?> getLoggedUser() {
+        try {
+            Object username = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // .getAuthenticatedUser();
+            System.out.println("\u001B[31m" + username + "\u001B[0m");
+            if (username != null) {
+                return new ResponseEntity<String>("User found", HttpStatus.OK);
+                // return "Welcome, " + user.getUsername() + "!";
+            } else {
+                return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+                // return "You are not logged in.";
+            }
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
